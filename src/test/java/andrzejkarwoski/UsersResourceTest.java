@@ -1,9 +1,14 @@
 package andrzejkarwoski;
 
+import andrzejkarwoski.entity.UsersRequestCount;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.vertx.core.json.JsonObject;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -12,8 +17,11 @@ import static org.hamcrest.CoreMatchers.is;
 @QuarkusTestResource(UserResourceMock.class)
 public class UsersResourceTest {
 
+    @Inject
+    EntityManager entityManager;
+
     @Test
-    public void getUserMetadata() {
+    public void getUserMetadataNeverRequested() {
 
         JsonObject response = new JsonObject("""
                 {
@@ -31,8 +39,8 @@ public class UsersResourceTest {
           .then()
              .statusCode(200)
              .body(is(response.encode()));
-
-
+        UsersRequestCount count = entityManager.getReference(UsersRequestCount.class, "andrzejkarwoski");
+        Assertions.assertEquals(1L, count.getRequestCount());
     }
 
 }

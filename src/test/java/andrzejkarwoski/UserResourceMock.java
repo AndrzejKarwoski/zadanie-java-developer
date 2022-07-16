@@ -16,7 +16,6 @@ public class UserResourceMock implements QuarkusTestResourceLifecycleManager {
     public Map<String, String> start() {
         wireMockServer = new WireMockServer();
         wireMockServer.start();
-
         wireMockServer.stubFor(get(urlEqualTo("/users/andrzejkarwoski"))
                 .willReturn(aResponse()
                         .withHeader("Content-Type", "application/json")
